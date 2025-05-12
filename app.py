@@ -1,0 +1,10 @@
+from flask import Flask, Blueprint
+from waitress import serve
+from views import views
+
+app = Flask(__name__)
+
+app.register_blueprint(views, url_prefix="/")
+
+if __name__ == '__main__':
+    serve(app, port='5002', threads=6)
