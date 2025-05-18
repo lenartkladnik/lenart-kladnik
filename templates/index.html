@@ -1,0 +1,139 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Website for Lenart Kladnik, @pyth0g">
+    <meta name="author" content="Lenart Kladnik">
+
+    <title>Lenart Kladnik</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="bg" id="background-div">
+        <canvas id="climber" width="200" height="200"></canvas>
+    </div>
+    <canvas id="holds"></canvas>
+
+    <div class="main-container">
+        <img class="pfp" src="{{ url_for('static', filename='logo.svg') }}">
+        <div class="main-content">
+            <span class="tag">pyth0g</span>
+            <span class="name">Lenart Kladnik</span>
+
+            <div class="description">
+                <span>I Love Programming / Currently in Highschool / I Love Climbing / My skillset:</span>
+            </div>
+
+            <div class="container" id="container">
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='python.svg') }}">
+                    <span class="idf">Python</span>
+                </div>
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='cpp.svg') }}">
+                    <span class="idf">C++</span>
+                </div>
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='c.svg') }}">
+                    <span class="idf">C</span>
+                </div>
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='js.svg') }}">
+                    <span class="idf">JavaScript</span>
+                </div>
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='css.svg') }}">
+                    <span class="idf">CSS</span>
+                </div>
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='html5.svg') }}">
+                    <span class="idf">HTML</span>
+                </div>
+                <div class="sk">
+                    <img class="logo" src="{{ url_for('static', filename='json.svg') }}">
+                    <span class="idf">JSON</span>
+                </div>
+            </div>
+
+
+            <div class="socials">
+                <a class="social-link" href="https://github.com/lenartkladnik">
+                    <img class="social-img" src="{{ url_for('static', filename='github.svg') }}">
+                </a>
+                <a class="social-link" href="https://youtube.com/@pyth0g">
+                    <img class="social-img" src="{{ url_for('static', filename='youtube.svg') }}">
+                </a>
+                <a class="social-link" href="mailto:lenart@kladnik.cc">
+                    <img class="social-img" src="{{ url_for('static', filename='mail.svg') }}">
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/static/script.js"></script>
+</html>
+
+=======
+{% extends 'base.html' %}
+
+{% block page %}Home{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <img class="pfp" src="{{ url_for('static', filename='logo.svg') }}">
+    <div class="main-content">
+        <span class="tag">pyth0g</span>
+        <span class="name">Lenart Kladnik</span>
+
+        <div class="description">
+            <span>I Love Programming / I am Currently in Highschool / I Love Climbing</span>
+        </div>
+        <div class="socials">
+            {% for social in socials %}
+            <a class="social-link" target="_blank" href="{{ social[0] }}">
+            <img class="social-img" src="{{ url_for('static', filename=social[1]) }}">
+            </a>
+            {% endfor %}
+        </div>
+
+        <span class="ind">Scroll down to see more...</span>
+    </div>
+</div>
+
+<div class="content">
+    <div class="label">
+        <span class="text">Recent Projects</span>
+        <a class="more" href="projects">View all</a>
+    </div>
+    <div class="projects" id="projects">
+        {% for project in projects %}
+        <div class="project" onclick="window.open('{{ project[3]}}', '_blank')">
+            <span class="date">{{ project[0] }}</span>
+            <img class="see-more" src="{{ url_for('static', filename='arrow-right.svg') }}">
+            <span class="proj-name">{{ project[1] }}</span>
+            <p class="proj-description">{{ project[2] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="label">
+        <span class="text">My skillset</span>
+    </div>
+    <div class="skillset" id="skillset">
+        {% for skill in skills %}
+        <div class="sk">
+            <img class="logo" src="{{ url_for('static', filename=skill[1]) }}">
+            <span class="idf">{{ skill[0] }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% include 'footer.html' %}
+</div>
+{% endblock %}
+>>>>>>> e5ba943 (Major UI update.)

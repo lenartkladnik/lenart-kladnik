@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% set selectedPage = 'contact' %}
+{% block page %}Contact{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="contact-container">
+        <span class="large">Fell free to reach out to me trough:</span>
+        <div class="socials">
+            {% for social in socials %}
+            <a class="social-link" target="_blank" href="{{ social[0] }}">
+            <img class="social-img" src="{{ url_for('static', filename=social[1]) }}">
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% include 'footer.html' %}
+{% endblock %}
