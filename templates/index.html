@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block page %}Home{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <img class="pfp" src="{{ url_for('static', filename='logo.svg') }}">
+    <div class="main-content">
+        <span class="tag">pyth0g</span>
+        <span class="name">Lenart Kladnik</span>
+
+        <div class="description">
+            <span>I Love Programming / I am Currently in Highschool / I Love Climbing</span>
+        </div>
+        <div class="socials">
+            {% for social in socials %}
+            <a class="social-link" target="_blank" href="{{ social[0] }}">
+            <img class="social-img" src="{{ url_for('static', filename=social[1]) }}">
+            </a>
+            {% endfor %}
+        </div>
+
+        <span class="ind">Scroll down to see more...</span>
+    </div>
+</div>
+
+<div class="content">
+    <div class="label">
+        <span class="text">Recent Projects</span>
+        <a class="more" href="projects">View all</a>
+    </div>
+    <div class="projects" id="projects">
+        {% for project in projects %}
+        <div class="project" onclick="window.open('{{ project[3]}}', '_blank')">
+            <span class="date">{{ project[0] }}</span>
+            <img class="see-more" src="{{ url_for('static', filename='arrow-right.svg') }}">
+            <span class="proj-name">{{ project[1] }}</span>
+            <p class="proj-description">{{ project[2] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="label">
+        <span class="text">My skillset</span>
+    </div>
+    <div class="skillset" id="skillset">
+        {% for skill in skills %}
+        <div class="sk">
+            <img class="logo" src="{{ url_for('static', filename=skill[1]) }}">
+            <span class="idf">{{ skill[0] }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% include 'footer.html' %}
+</div>
+{% endblock %}

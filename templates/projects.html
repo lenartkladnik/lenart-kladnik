@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% set selectedPage = 'projects' %}
+{% block page %}Projects{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="all-projects" id="projects">
+        <div class="label large">
+            <span class="text">Recent Projects</span>
+            <a class="more" target="_blank" href="https://github.com/lenartkladnik?tab=repositories">See more</a>
+        </div>
+
+        {% set ns = namespace(lastYr='', currentYr='') %}
+
+        {% for project in projects %}
+
+        {% set ns.currentYr = project[0].split(', ')[1] %}
+
+        {% if ns.lastYr == '' %}
+        {% set ns.lastYr = ns.currentYr %}
+        {% endif %}
+
+        {% if not ns.currentYr == ns.lastYr %}
+        {% set ns.lastYr = ns.currentYr %}
+
+        <div class="spacing"></div>
+        {% endif %}
+
+        <div class="project" onclick="window.open('{{ project[3]}}', '_blank')">
+            <span class="date">{{ project[0] }}</span>
+            <img class="see-more" src="{{ url_for('static', filename='arrow-right.svg') }}">
+            <span class="proj-name">{{ project[1] }}</span>
+            <p class="proj-description">{{ project[2] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'footer.html' %}
+{% endblock %}

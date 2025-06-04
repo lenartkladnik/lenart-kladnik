@@ -1,0 +1,11 @@
+<footer>
+    <p>&copy; {{ year }} Lenart Kladnik. All rights reserved.</p>
+    <br />
+    <small>
+        {% for social in socials %}
+            <a class="social-link" target="_blank" href="{{ social[0] }}">
+            <img class="social-img small" src="{{ url_for('static', filename=social[1]) }}">
+            </a>
+        {% endfor %}
+    </small>
+</footer>
