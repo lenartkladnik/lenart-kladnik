@@ -436,15 +436,35 @@ function drawBgHolds() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    var [_, r] = drawHolds(ctx, holds, 0, 0, canvas.width, canvas.height, canvas, false);
+    const BATCH_SIZE = 20;
+    let i = 0;
 
-    if (r === 1 || !res) {
-        console.warn("[Climber Background] Background holds not drawn yet.");
-        requestAnimationFrame(drawBgHolds);
+    function drawBatch() {
+        const start = i;
+        const end = Math.min(i + BATCH_SIZE, holds.length);
+
+        for (; i < end; i++) {
+            const x = holds[i].x;
+            const y = holds[i].y;
+
+            if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
+                drawHold(ctx, x, y, canvas, i, false);
+            }
+        }
+
+        if (i < holds.length) {
+            if ("requestIdleCallback" in window) {
+                requestIdleCallback(() => setTimeout(drawBatch, 0));
+            } else {
+                setTimeout(drawBatch, 0);
+            }
+        } else {
+            console.log("[Climber Background] Done drawing holds.");
+        }
     }
-}
 
-requestAnimationFrame(drawBgHolds);
+    drawBatch();
+}
 
 function mainLoop() {
     updatePos();
@@ -453,5 +473,18 @@ function mainLoop() {
     requestAnimationFrame(mainLoop);
 }
 
-requestAnimationFrame(mainLoop);
+async function init() {
+  await document.fonts.ready;
+  await getMaxHeight();
+
+  holds = getHolds(maxWidth, maxHeight);
+  maxHeightReady = true;
+
+  setTimeout(drawBgHolds, 0);
+  requestAnimationFrame(mainLoop);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    init();
+});
 

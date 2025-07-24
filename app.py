@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint
+from flask import Flask
 from waitress import serve
 from views import views
 from datetime import datetime
