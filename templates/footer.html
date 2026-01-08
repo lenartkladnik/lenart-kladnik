@@ -1,11 +1,7 @@
 <footer>
-    <p>&copy; {{ year }} Lenart Kladnik. All rights reserved.</p>
     <br />
-    <small>
-        {% for social in socials %}
-            <a class="social-link" target="_blank" href="{{ social[0] }}">
-            <img class="social-img small" src="{{ url_for('static', filename=social[1]) }}">
-            </a>
-        {% endfor %}
-    </small>
+    <p>source: <a href="https://github.com/lenartkladnik/lenart-kladnik">github.com/lenartkladnik/lenart-kladnik</a>
+    <br />
+    &copy; {{ year }} Lenart Kladnik</p>
+    <br />
 </footer>

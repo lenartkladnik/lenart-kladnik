@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
+{% set selectedPage = 'home' %}
 {% block page %}Home{% endblock %}
 
 {% block content %}
 <div class="main-container">
-    <img class="pfp" src="{{ url_for('static', filename='logo.svg') }}">
+    <img class="pfp" src="{{ url_for('static', filename='media/logo.svg') }}">
     <div class="main-content">
         <span class="tag">pyth0g</span>
         <span class="name">Lenart Kladnik</span>
@@ -33,7 +34,7 @@
         {% for project in projects %}
         <div class="project" onclick="window.open('{{ project[3]}}', '_blank')">
             <span class="date">{{ project[0] }}</span>
-            <img class="see-more" src="{{ url_for('static', filename='arrow-right.svg') }}">
+            <img class="see-more" src="{{ url_for('static', filename='media/arrow-right.svg') }}">
             <span class="proj-name">{{ project[1] }}</span>
             <p class="proj-description">{{ project[2] }}</p>
         </div>

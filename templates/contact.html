@@ -6,14 +6,13 @@
 {% block content %}
 <div class="wrapper">
     <div class="contact-container">
-        <span class="large max_width">Fell free to reach out to me trough:</span>
-        <div class="socials">
-            {% for social in socials %}
-            <a class="social-link" target="_blank" href="{{ social[0] }}">
-            <img class="social-img" src="{{ url_for('static', filename=social[1]) }}">
-            </a>
-            {% endfor %}
-        </div>
+        <p>You can follow me on my socials below</p>
+        {% for social in socials %}
+        <span>- <a href="https://{{ social }}">{{ social }}</a></span>
+        {% endfor %}
+        <p>If you wish to contact me directly please use the following email</p>
+        <a href="mailto:{{ mail }}">{{ mail }}</a>
+        <img class="contact-pfp" src="{{ url_for('static', filename='media/logo.svg') }}">
     </div>
 </div>
 {% include 'footer.html' %}

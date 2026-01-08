@@ -8,7 +8,7 @@
     <meta name="author" content="Lenart Kladnik">
 
     <title>{% block page %}{% endblock %} • Lenart Kladnik</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='media/favicon.ico') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -19,7 +19,9 @@
     <canvas id="holds"></canvas>
 
     <div class="nav-bar">
-        <img onclick="window.location.href = '/';" src="{{ url_for('static', filename='logo.svg') }}">
+        <a href="/" class="{{ 'selected' if selectedPage == 'home' else '' }}">
+            Home
+        </a>
         <a href="projects" class="{{ 'selected' if selectedPage == 'projects' else '' }}">
             Projects
         </a>

@@ -22,6 +22,11 @@ body.light-mode {
     background-color: #f0f0f0;
 }
 
+a {
+    color: rgb(132, 40, 177);
+    text-decoration: unset;
+}
+
 .wrapper {
     display: block;
     min-height: 100vh;
@@ -174,6 +179,20 @@ footer {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.contact-pfp {
+    position: absolute;
+
+    border-radius: 100px;
+
+    width: 200px;
+    height: 200px;
+
+    right: -356px;
+    top: 65px;
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .contact-container {
     position: absolute;
     display: grid;
@@ -256,11 +275,11 @@ footer {
     display: flex;
 
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-evenly;
     text-align: left;
     align-items: center;
 
-    max-width: fit-content;
+    width: 30vw;
 
     background-color: rgba(127, 127, 127, 0.08);
     border-radius: 10px;
@@ -356,12 +375,11 @@ footer {
     position: relative;
     float: right;
 
-    width: 2vh;
-    height: 2vh;
+    width: 20px;
+    height: 20px;
+    bottom: 20px;
 
-    bottom: 2vh;
-
-    margin-right: 2vh;
+    margin-right: 5px;
 }
 
 .project .proj-name {
@@ -385,7 +403,7 @@ footer {
 }
 
 .large {
-    font-size: 2vw !important;
+    font-size: 20pt !important;
 
     margin-top: 3vh !important;
     margin-bottom: 3vh !important;

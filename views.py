@@ -1,5 +1,8 @@
-from flask import Blueprint, render_template, url_for
+from flask import Blueprint, render_template
 from datetime import datetime
+
+LANGS = 'media/langs/'
+SOCIALS = 'media/socials/'
 
 views = Blueprint('views', __name__)
 
@@ -17,21 +20,26 @@ all_projects = [
 all_projects = sorted(all_projects, key=lambda x: datetime.strptime(x[0], '%b %d, %Y'))[::-1]
 new_projects = all_projects[0:2]
 
+mail = 'lenart@kladnik.cc'
+
 socials = [
-    ('https://github.com/lenartkladnik', 'github.svg'),
-    ('https://youtube.com/@pyth0g', 'youtube.svg'),
-    ('mailto:lenart@kladnik.cc', 'mail.svg'),
-    ('https://instagram.com/lenartkladnik', 'instagram.svg')
+    ('https://github.com/lenartkladnik', SOCIALS + 'github.svg'),
+    ('https://youtube.com/@pyth0g', SOCIALS + 'youtube.svg'),
+    ('mailto:' + mail, SOCIALS + 'mail.svg'),
+    ('https://instagram.com/lenartkladnik', SOCIALS + 'instagram.svg')
 ]
 
+display_socials = [x[0].replace('https://', '').replace('http://', '') for x in socials if 'mailto:' not in x[0]]
+
 skills = [
-    ('Python', 'python.svg'),
-    ('C++', 'cpp.svg'),
-    ('C', 'c.svg'),
-    ('JavaScript', 'js.svg'),
-    ('CSS', 'css.svg'),
-    ('Html', 'html5.svg'),
-    ('JSON', 'json.svg')
+    ('Python', LANGS + 'python.svg'),
+    ('C++', LANGS + 'cpp.svg'),
+    ('C', LANGS + 'c.svg'),
+    ('JavaScript', LANGS + 'js.svg'),
+    ('CSS', LANGS + 'css.svg'),
+    ('Html', LANGS + 'html5.svg'),
+    ('JSON', LANGS + 'json.svg'),
+    ('Bash', LANGS + 'bash.svg')
 ]
 
 @views.route('/')
@@ -44,4 +52,4 @@ def projects():
 
 @views.route('/contact')
 def contact():
-    return render_template('contact.html', socials=socials)
+    return render_template('contact.html', socials=display_socials, mail=mail)
