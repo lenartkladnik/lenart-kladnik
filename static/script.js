@@ -303,7 +303,7 @@ function loadHolds() {
     const holds = [];
 
     for (let i = 0; i < holdSpriteCount; i++) {
-        const svgUrl = `/static/hold_${i}.svg`;
+        const svgUrl = `/static/media/background/hold_${i}.svg`;
 
         fetch(svgUrl)
             .then(response => response.text())
