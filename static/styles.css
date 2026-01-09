@@ -2,6 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
+:root {
+    --normal-width: 30vw;
+}
+
 * {
     display: inline-block;
     transition: transform 0.1s ease;
@@ -101,6 +105,7 @@ footer {
     text-align: center;
 
     width: 100vw;
+    min-height: 90px;
 
     border-top: rgb(19, 19, 19) 2px solid;
 
@@ -117,7 +122,7 @@ footer {
     position: relative;
 
     font-size: 2.2vw;
-    max-width: calc(30vw - 0.2vw);
+    max-width: calc(var(--normal-width) - 0.2vw);
 
     bottom: 10vh;
 }
@@ -187,8 +192,8 @@ footer {
     width: 200px;
     height: 200px;
 
-    right: -356px;
-    top: 65px;
+    right: 20vw;
+    top: 40vh;
 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -275,11 +280,12 @@ footer {
     display: flex;
 
     flex-direction: row;
-    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 2px;
     text-align: left;
     align-items: center;
 
-    width: 30vw;
+    max-width: var(--normal-width);
 
     background-color: rgba(127, 127, 127, 0.08);
     border-radius: 10px;
@@ -346,7 +352,7 @@ footer {
 
     background-color: rgba(127, 127, 127, 0.08);
 
-    width: 30vw;
+    width: var(--normal-width);
     height: fit-content;
 
     cursor: pointer;
@@ -390,7 +396,7 @@ footer {
     top: 0.2vh;
     left: 0.5vw;
 
-    max-width: calc(30vw - 3vw);
+    max-width: calc(var(--normal-width) - 3vw);
 
     font-size: 1.2vw;
 }
@@ -402,6 +408,16 @@ footer {
     left: 0.5vw;
 }
 
+.project .proj-img {
+    display: block;
+
+    margin-top: 10px;
+    max-width: calc(var(--normal-width) - 20px);
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .large {
     font-size: 20pt !important;
 
@@ -410,7 +426,7 @@ footer {
 }
 
 .label {
-    width: 30vw;
+    width: var(--normal-width);
     display: block;
 
     margin-top: 5vh;
@@ -452,6 +468,9 @@ footer {
 }
 
 @media only screen and (max-width: 900px) {
+    :root {
+        --normal-width: 80vw;
+    }
     .nav-bar {
         gap: 4vw;
     }
@@ -504,9 +523,22 @@ footer {
         transform: translateX(-50%);
     }
 
+    .contact-pfp {
+        top: 90px;
+        left: 50%;
+        right: 0;
+        transform: translateX(-50%);
+    }
+
+    .contact-container {
+        top: 32vh;
+        width: var(--normal-width);
+    }
+
     .skillset {
         font-size: 1.2vh;
         top: 2.5vh;
+        max-width: var(--normal-width);
     }
 
     .idf {
@@ -520,10 +552,6 @@ footer {
         width: max-content;
     }
 
-    .project {
-        width: 80vw;
-    }
-
     .project .date  {
         font-size: 3.2vw;
 
@@ -534,18 +562,12 @@ footer {
         font-size: 4vw;
 
         left: 3vw;
-
-        max-width: calc(80vw - 3vw);
     }
 
     .project .proj-description {
         margin-top: 2vh;
 
         left: 3vw;
-    }
-
-    .label {
-        width: 80vw;
     }
 
     .label .text {
