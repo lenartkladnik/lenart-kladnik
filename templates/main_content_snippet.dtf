@@ -1,0 +1,5 @@
+
+{{ color("text") }}Lenart Kladnik{{ end_color() }}
+{{ color("light-gray") }}site: {{ color("aqua") }}https://lenart.kladnik.cc{{ color("text") }}
+
+{{ box([[color('magenta') + i[2] + end_color() for i in socials], [color('magenta') + italic() + i[0] + end_color() for i in socials]], "Socials", 1, 1, 1, 1, "left") }}

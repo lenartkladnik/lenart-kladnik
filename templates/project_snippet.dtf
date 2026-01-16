@@ -1,0 +1,1 @@
+{{ box([[color("mid-gray") + x[0] + " " + color("lime") + x[5] + end_color() for x in new_projects], [f"{color("text")}{x[6]}{end_color()}" for x in new_projects], [color("aqua") + x[3] + end_color() for x in new_projects]], "Recent projects", 1, 0, 1, 1, "left") }}

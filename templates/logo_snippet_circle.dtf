@@ -1,0 +1,13 @@
+{{ color("black") }}    🭈▃▅▅▅▅▅▆▆▆▆▅▅▅▅▅▃🬽{{ end_color() }}
+{{ color("black") }}  🭇🭂{{ background_color("black") }}                  {{ background_color("transparent") }}🭍🬼{{ end_color() }}
+{{ color("black") }}  🭁{{ background_color("black") }}       {{ color("purple") }}🭇{{ color("black") }}            {{ background_color("transparent") }}🭌{{ end_color() }}
+{{ color("black") }} 🭅{{ background_color("black") }}    {{ color("purple") }}▁▁ 🭊🭁 🬼{{ color("black") }}           {{ background_color("transparent") }}🭐{{ end_color() }}
+ {{ background_color("black") }}     {{ color("purple") }}██ ██ 🭌🬿 ▁▁ 🭊🭁     {{ end_color() }}
+{{ color("black") }}▕{{ background_color("black") }}     {{ color("purple") }}██ ██ ██ ██ {{ color("mid-purple") }}██{{ end_color() }}{{ background_color("black") }}     {{ end_color() }}{{ color("black") }}▏{{ end_color() }}
+{{ color("black") }}▕{{ background_color("black") }}     {{ color("purple") }}██ ██ ██ ██ {{ color("mid-purple") }}██{{ end_color() }}{{ background_color("black") }}     {{ end_color() }}{{ color("black") }}▏{{ end_color() }}
+{{ color("black") }}▕{{ background_color("black") }}     {{ color("purple") }}██ ██ ██ {{ color("mid-purple") }}██ █{{ color("light-purple") }}█{{ end_color() }}{{ background_color("black") }}     {{ end_color() }}{{ color("black") }}▏{{ end_color() }}
+ {{ background_color("black") }}     {{ color("purple") }}██ ██ █{{ color("mid-purple") }}█ █{{ color("light-purple") }}█ ██     {{ end_color() }}
+{{ color("black") }} 🭖{{ background_color("black") }}    {{ color("purple") }}🬂🬂 🬂{{ color("mid-purple") }}🬂 🬂🬂 {{ color("light-purple") }}🬂🬂 🬂🬂 {{ end_color() }}{{ background_color("black") }}   {{ end_color() }}{{ color("black") }}🭡
+{{ color("black") }}  🭒{{ background_color("black") }}       {{ color("white") }}Pyth0g{{ color("black") }}       {{ background_color("transparent") }}🭝{{ end_color() }}
+{{ color("black") }}  🭢🭓{{ background_color("black") }}                  {{ background_color("transparent")}}🭞🭗{{ end_color() }}
+{{ color("black") }}    🭣🮃🮄🮄🮄🮄🮄🮅🮅🮅🮅🮄🮄🮄🮄🮄🮃🭘{{ end_color() }}
