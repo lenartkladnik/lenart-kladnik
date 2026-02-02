@@ -1,8 +1,14 @@
-{% include "logo_snippet.dtf" "main_content_snippet.dtf" with gap = 5 padding_left = 1 %}
+{% include "logo_snippet.dtf" "main_content_snippet.dtf" with gap = 5, padding_left = 1, padding_top = 1 %}
 
           {{ color("text") }}{{ italic() }}I Love Programming / I am Currently in Highschool / I Love Climbing{{ end_color() }}
 
 
+{% set use_projects = new_projects %}
+{% set title = "Recent projects" %}
 {% include "project_snippet.dtf" %}
 {% set lang_width = len(max([x[0] for x in skills], key=len)) %}
-{{ box("    ".join(f"{color('lime')}" + x[0].center(lang_width) + f"{end_color()}" for x in skills) + "\n\n" + side_to_side([list(map(lambda a: visual_center(a, lang_width), x[2].split("\n"))) for x in skills], gap=4), "My skillset", 1, 1, 1, 1, "left") }}
+{{ box((' ' * 4).join(f"{color('lime')}" + x[0].center(lang_width) + f"{end_color()}" for x in skills) + "\n\n" + side_to_side([list(map(lambda a: visual_center(a, lang_width), x[2].split("\n"))) for x in skills], gap=4), "My skillset", 1, 1, 1, 1, "left") }}
+
+{% for page in pages %}
+ {{ color("lime") }}$ curl {{ color("text") }}lenart.kladnik.cc{{ page[0].ljust(len(max([x[0] for x in pages], key=len))) }} {{ color("aqua") }}{{ page[1] }}{{ end_color() }}
+{% end %}

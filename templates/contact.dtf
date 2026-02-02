@@ -1,0 +1,7 @@
+{{ color("text") }}You can follow me on my socials below{{ end_color() }}
+{% for social in socials %}
+{{ color("text") }}- {{ color("aqua") }}{{ social }}{{ end_color() }}
+{% end %}
+
+{{ color("text") }}If you wish to contact me directly please use the following email{{ end_color() }}
+{{ color("aqua") }}{{ mail }}{{ end_color() }}

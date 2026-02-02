@@ -1,8 +1,7 @@
-import re
 from typing import cast
+from dtf import _side_to_side, _remove_ansi, _visual_len, _visual_ljust
 
 ESC = "\033"
-ansi_re = re.compile(r'\x1b\[[0-?]*[ -\/]*[@-~]')
 
 def _color_id(color: str) -> int:
     match color:
@@ -74,13 +73,10 @@ def left(amount: int) -> str:
 def right(amount: int) -> str:
     return ESC+f"[{amount}C"
 
-def remove_ansi(string: str):
-    removed = ansi_re.sub('', string)
-
-    return removed
-
-def visual_len(string: str) -> int:
-    return len(remove_ansi(string))
+remove_ansi = _remove_ansi
+visual_len = _visual_len
+side_to_side = _side_to_side
+visual_ljust = _visual_ljust
 
 def visual_center(string: str, width: int) -> str:
     if len(string) < 1:
@@ -101,20 +97,6 @@ def visual_center(string: str, width: int) -> str:
         right += 1
 
     return " " * left + string + " " * right
-
-def visual_ljust(string: str, width: int) -> str:
-    if len(string) < 1:
-        return string.rjust(width)
-
-    non_ansi = remove_ansi(string).ljust(width, "\x00")
-    right = 0
-
-    for i in non_ansi[::-1]:
-        if i != "\x00":
-            break
-        right += 1
-
-    return string + " " * right
 
 def visual_rjust(string: str, width: int) -> str:
     if len(string) < 1:
@@ -189,24 +171,3 @@ def box(data: str | list[str] | list[list[str]], title: str | None = None, paddi
         box_list[idx] += f"{color('light-gray')}{'╰' if i == 0 else ''}{'─' * (width + padding_left + padding_right)}{'╯' if i == len(widths) - 1 else '┴'}{end_color()}"
 
     return "\n".join(box_list)
-
-def side_to_side(rendered: list[list[str]], gap: int = 0, padding_left: int = 0, padding_right: int = 0, padding_top: int = 0, padding_bottom: int = 0) -> str:
-    max_height = len(max(rendered, key=len))
-
-    for i in range(len(rendered)): # Set all to same height
-        rendered[i] += ["" for _ in range(max_height - rendered[i].count('\n'))]
-
-    widths = [visual_len(max(each, key=visual_len)) for each in rendered]
-
-    final = []
-    line = ""
-
-    for i in range(max_height):
-        for j, each in enumerate(rendered):
-            if i < len(each):
-                line += visual_ljust(each[i], widths[j]) + " " * gap
-
-        final.append(" " * padding_left + line.rstrip() + " " * padding_right)
-        line = ""
-
-    return "\n" * padding_top + "\n".join(final) + "\n" * padding_bottom

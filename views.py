@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, current_app
 from datetime import datetime
-from dtf import DynamicTextFormat
+from dtf import render_text
 from resources import background_color, bold, color, end_color, box, italic, side_to_side, visual_center
 
-LANGS = 'media/langs/'
+SKILLS = 'media/skills/'
 SOCIALS = 'media/socials/'
 
 views = Blueprint('views', __name__)
@@ -109,44 +109,55 @@ display_socials = [x[0].replace('https://', '').replace('http://', '') for x in 
 skills = [
     (
         'Python',
-        LANGS + 'python.svg',
+        SKILLS + 'python.svg',
         f'  {color("blue")}ϾΞΞΞ╗{end_color()}\n {color("blue")}╔ΞΞΞΞ╝{color("yellow")}╗{end_color()}\n {color("blue")}╚{color("yellow")}╔ΞΞΞΞ╝{end_color()}\n  {color("yellow")}╚ΞΞΞϿ{end_color()}'
     ),
     (
         'C++',
-        LANGS + 'cpp.svg',
+        SKILLS + 'cpp.svg',
         f'{color("light-blue")}🭈🭆🭂█🭍🭑🬽{end_color()}\n{color("light-blue")}█{color("white")}{background_color("light-blue")} 𜵎𜷋𜷋{background_color("light-blue")}𜹠{color("mid-blue")}🭅{end_color()}\n{color("light-blue")}{background_color("dark-blue")}🭝{color("light-blue")}🭚{end_color()}{color("white")}{background_color("dark-blue")}𜴇🬁🬁{color("mid-blue")} 🭖{end_color()}\n{color("dark-blue")}🭣🭧🭓█🭞🭜🭘{end_color()}'
     ),
     (
         'C',
-        LANGS + 'c.svg',
+        SKILLS + 'c.svg',
         f'{color("light-blue")}🭈🭆🭂█🭍🭑🬽{end_color()}\n{color("light-blue")}█{color("white")}{background_color("light-blue")}  𜵎 {background_color("light-blue")} {color("mid-blue")}🭅{end_color()}\n{color("light-blue")}{background_color("dark-blue")}🭝{color("light-blue")}🭚{end_color()}{color("white")}{background_color("dark-blue")} 𜴇 {color("mid-blue")} 🭖{end_color()}\n{color("dark-blue")}🭣🭧🭓█🭞🭜🭘{end_color()}'
 
     ),
     (
         'JavaScript',
-        LANGS + 'js.svg',
+        SKILLS + 'js.svg',
         f'{background_color("yellow")}        {end_color()}\n{background_color("yellow")}        {end_color()}\n{background_color("yellow")}{color("black")}    🬓𜵎𜴀 {end_color()}\n{background_color("yellow")}{color("black")}   𜴫𜴍𜴪𜴍 {end_color()}'),
     (
         'CSS',
-        LANGS + 'css.svg',
+        SKILLS + 'css.svg',
         f'{background_color("darker-purple")}        {end_color()}\n{background_color("darker-purple")}        {end_color()}\n{background_color("darker-purple")}{color("white")}  𜵎𜴀𜵎𜴀𜵎𜴀{end_color()}\n{background_color("darker-purple")}{color("white")}  𜴬𜴉𜴪𜴍𜴪𜴍{end_color()}'
     ),
     (
         'Html',
-        LANGS + 'html5.svg',
+        SKILLS + 'html5.svg',
         f'{color("orange")} 🬦🬹🬹🬹🬹🬓\n{color("orange")}▐{color("white")}{background_color("orange")} 𜷇𜶷 {end_color()}{color("orange")}▌\n{color("orange")} 🭦{color("white")}{background_color("orange")} 𜴜𜴒 {end_color()}{color("orange")}🭛{end_color()}\n{color("orange")}🭣🭧🭜🭘{end_color()}'
     ),
     (
         'JSON',
-        LANGS + 'json.svg',
-        f'{color("mid-gray")} 🬵𜴈🬂🬂🬂𜴇🬱{end_color()}\n{color("mid-gray")} █     █{end_color()}\n{color("mid-gray")} █     █{end_color()}\n{color("mid-gray")} 𜴅𜴣𜴧𜴧𜴧𜴔𜴂{end_color()}'
+        SKILLS + 'json.svg',
+        f'{color("dark-gray")} 🬵𜴈🬂🬂{color("mid-gray")}🬂𜴇🬱{end_color()}\n{color("dark-gray")} █     {color("mid-gray")}█{end_color()}\n{color("mid-gray")} █     {color("dark-gray")}█{end_color()}\n{color("mid-gray")} 𜴅𜴣𜴧𜴧{color("dark-gray")}𜴧𜴔𜴂{end_color()}'
     ),
     (
         'Bash',
-        LANGS + 'bash.svg',
-        f'{color("mid-gray")}🭇🬭🬭🬭🬭🬼{end_color()}\n{color("mid-gray")}▐{color("white")}(🭽  {color("mid-gray")}▌{end_color()}\n{color("mid-gray")}▐{color("white")}🭿)__{color("mid-gray")}▌{end_color()}\n{color("mid-gray")}🭢🬂🬂🬂🬂🭗{end_color()}'
+        SKILLS + 'bash.svg',
+        f'{color("mid-gray")}🭇🬭🬭🬭🬭🬼{end_color()}\n{color("mid-gray")}▐{background_color("mid-gray")}{color("white")}(🭽  {color("mid-gray")}{background_color("transparent")}▌{end_color()}\n{color("mid-gray")}▐{background_color("mid-gray")}{color("white")}🭿){color("lime")}__{color("mid-gray")}{background_color("transparent")}▌{end_color()}\n{color("mid-gray")}🭢🬂🬂🬂🬂🭗{end_color()}'
+    ),
+    (
+        'Git',
+        SKILLS + 'git.svg',
+        f''
     )
+]
+
+pages = [
+    ('', 'Get the home page'),
+    ('/projects', 'Get the list of projects'),
+    ('/contact', 'Get the contact page')
 ]
 
 text_response = ["curl", "python", "binget", "java", "perl", "php", "pycurl", "go-http"]
@@ -154,29 +165,29 @@ text_response = ["curl", "python", "binget", "java", "perl", "php", "pycurl", "g
 @views.route('/')
 def index():
     if any([x in request.headers["User-Agent"].lower() for x in text_response]):
-        return DynamicTextFormat.render_text("index.dtf", color=color,
-                                             end_color=end_color, skills=skills,
-                                             background_color=background_color,
-                                             bold=bold, socials=socials,
-                                             box=box, italic=italic,
-                                             all_projects=all_projects,
-                                             new_projects=new_projects,
-                                             side_to_side=side_to_side,
-                                             visual_center=visual_center,
-                                            )
+        return render_text('{% include "index.dtf" with padding_left = 2, padding_bottom = 1 %}', color=color,
+                                        end_color=end_color, skills=skills,
+                                        background_color=background_color,
+                                        bold=bold, socials=socials,
+                                        box=box, italic=italic,
+                                        new_projects=new_projects,
+                                        side_to_side=side_to_side,
+                                        visual_center=visual_center,
+                                        pages=pages
+        )
 
     return render_template('index.html', socials=socials, projects=new_projects, skills=skills)
 
 @views.route('/projects')
 def projects():
     if any([x in request.headers["User-Agent"].lower() for x in text_response]):
-        return "Hello world!"
+        return render_text('projects.dtf', all_projects=all_projects, box=box, color=color, end_color=end_color)
 
     return render_template('projects.html', projects=all_projects)
 
 @views.route('/contact')
 def contact():
     if any([x in request.headers["User-Agent"].lower() for x in text_response]):
-        return "Hello world!"
+        return render_text('{% include "contact.dtf" "logo_snippet.dtf" with padding = 1, gap = 10, padding_left = 1 %}', socials=display_socials, mail=mail, color=color, background_color=background_color, end_color=end_color)
 
     return render_template('contact.html', socials=display_socials, mail=mail)

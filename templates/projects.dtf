@@ -1,0 +1,7 @@
+
+  {{ color("light-gray") }}more: {{ color("aqua") }}https://github.com/lenartkladnik?tab=repositories{{ end_color() }}
+
+{% set use_projects = all_projects %}
+{% set title = "Projects" %}
+{% include "project_snippet.dtf" with padding_left = 2 %}
+

@@ -186,7 +186,7 @@ function drawClimber(ctx, holds, lengths, canvas) {
 
     function findClosestHold(holds, center, xSign, ySign) {
         return holds
-            .filter(h => 
+            .filter(h =>
                 (xSign === 0 || (xSign > 0 ? h.x >= center.x : h.x <= center.x)) &&
                 (ySign === 0 || (ySign > 0 ? h.y >= center.y : h.y <= center.y)) &&
                 distance(h, center) <= maxReach
@@ -240,7 +240,7 @@ function stringToSeed(str) {
         const char = str.charCodeAt(i);
         hash = (hash * 31 + char) | 0;
     }
-  
+
     return Math.abs(hash);
 }
 
@@ -299,13 +299,13 @@ function getHolds(width, height) {
     return holds;
 }
 
-function loadHolds() {
+async function loadHolds() {
     const holds = [];
 
     for (let i = 0; i < holdSpriteCount; i++) {
         const svgUrl = `/static/media/background/hold_${i}.svg`;
 
-        fetch(svgUrl)
+        await fetch(svgUrl)
             .then(response => response.text())
             .then(svgText => {
                 const blob = new Blob([svgText], { type: 'image/svg+xml' });
@@ -329,9 +329,7 @@ function loadHolds() {
     return holds;
 }
 
-var holds_svgs = loadHolds();
-
-function drawHold(ctx, x, y, canvas, holds_index, highlight) {
+function drawHold(holds_svgs, ctx, x, y, canvas, holds_index, highlight) {
     if (holds_svgs.length !== holdSpriteCount) {
         console.warn(`[Climber Background] Attempted draw when holds aren't loaded yet!`);
 
@@ -360,7 +358,7 @@ function drawHold(ctx, x, y, canvas, holds_index, highlight) {
     }
 }
 
-function drawHolds(context, holds, x_s, y_s, x_e, y_e, canvas, highlight) {
+function drawHoldsBound(holds_svgs, context, holds, x_s, y_s, x_e, y_e, canvas, highlight) {
     const displayed = [];
     var r;
 
@@ -369,10 +367,23 @@ function drawHolds(context, holds, x_s, y_s, x_e, y_e, canvas, highlight) {
         y = holds[i].y;
 
         if (x_s <= x && x <= x_e && y_s <= y && y <= y_e) {
-            r = drawHold(context, x - x_s, y - y_s, canvas, i, highlight);
+            r = drawHold(holds_svgs, context, x - x_s, y - y_s, canvas, i, highlight);
 
             displayed.push(holds[i]);
         }
+    }
+
+    return [displayed, r];
+}
+
+function drawHoldsUnbound(holds_svgs, context, holds, canvas, highlight) {
+    const displayed = [];
+    var r;
+
+    for (var i = 0; i < holds.length; i++) {
+        r = drawHold(holds_svgs, context, holds[i].x, holds[i].y, canvas, i, highlight);
+
+        displayed.push(holds[i]);
     }
 
     return [displayed, r];
@@ -412,20 +423,20 @@ function maxHeightCheck() {
     return true;
 }
 
-function drawBgClimber() {
+function drawBgClimber(holds_svgs) {
     var canvas = document.getElementById('climber');
 
     var ctx = canvas.getContext("2d");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    var [displayed_holds, _] = drawHolds(ctx, holds, X, Y, X + canvas.width, Y + canvas.height, canvas, true);
+    var [displayed_holds, _] = drawHoldsBound(holds_svgs, ctx, holds, X, Y, X + canvas.width, Y + canvas.height, canvas, true);
     drawClimber(ctx, holds, lengths, canvas);
 
     applyFading(ctx, canvas);
 }
 
-function drawBgHolds() {
+function drawBgHolds(holds_svgs) {
     res = maxHeightCheck();
 
     var canvas = document.getElementById('holds');
@@ -436,55 +447,27 @@ function drawBgHolds() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const BATCH_SIZE = 20;
-    let i = 0;
-
-    function drawBatch() {
-        const start = i;
-        const end = Math.min(i + BATCH_SIZE, holds.length);
-
-        for (; i < end; i++) {
-            const x = holds[i].x;
-            const y = holds[i].y;
-
-            if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
-                drawHold(ctx, x, y, canvas, i, false);
-            }
-        }
-
-        if (i < holds.length) {
-            if ("requestIdleCallback" in window) {
-                requestIdleCallback(() => setTimeout(drawBatch, 0));
-            } else {
-                setTimeout(drawBatch, 0);
-            }
-        } else {
-            console.log("[Climber Background] Done drawing holds.");
-        }
-    }
-
-    drawBatch();
+    drawHoldsUnbound(holds_svgs, ctx, holds, canvas, false);
 }
 
-function mainLoop() {
+function mainLoop(holds_svgs) {
     updatePos();
-    drawBgClimber();
+    drawBgClimber(holds_svgs);
 
-    requestAnimationFrame(mainLoop);
+    requestAnimationFrame(() => mainLoop(holds_svgs));
 }
 
-async function init() {
+async function init(holds_svgs) {
   await document.fonts.ready;
   await getMaxHeight();
 
   holds = getHolds(maxWidth, maxHeight);
   maxHeightReady = true;
 
-  setTimeout(drawBgHolds, 0);
-  requestAnimationFrame(mainLoop);
+  drawBgHolds(holds_svgs);
+  requestAnimationFrame(() => mainLoop(holds_svgs));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    init();
+loadHolds().then(function(holds_svgs) {
+    init(holds_svgs);
 });
-

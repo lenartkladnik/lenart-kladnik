@@ -1,196 +1,258 @@
+'''
+An implementation of the Dynamic Text Format.
+
+This implementation and format are made by Lenart Kladnik
+(https://github.com/lenartkladnik)
+2026
+'''
+
 import os.path
-from resources import side_to_side
+import re
+
+_IDENTIFIER = "identifier"
+_KEYWORD = "keyword"
+_TEXT = "text"
+_ansi_str = re.compile(r'\x1b\[[0-?]*[ -\/]*[@-~]')
 
 class DynamicTextFormatError(Exception):...
 
-class DynamicTextFormat:
-    IDENTIFIER = "identifier"
-    KEYWORD = "keyword"
-    TEXT = "text"
+class Options:
+    template_folder = "templates/"
 
-    @staticmethod
-    def render_text(path: str, **context):
-        if not path.endswith(".dtf"):
-            raise RuntimeError("Path for DynamicTextFormat.render_text must be a .dtf file")
+def _remove_ansi(string: str):
+    removed = _ansi_str.sub('', string)
 
-        contents = None
-        with open(os.path.join("templates", path)) as f:
-            contents = f.read()
+    return removed
 
-        if not contents:
-            return ""
+def _visual_len(string: str) -> int:
+    return len(_remove_ansi(string))
 
-        tokens = DynamicTextFormat._tokenize_text(path, contents)
-        result = DynamicTextFormat._parse_text(path, tokens, **context)
+def _visual_ljust(string: str, width: int) -> str:
+    if len(string) < 1:
+        return string.rjust(width)
 
-        return result
+    non_ansi = _remove_ansi(string).ljust(width, "\x00")
+    right = 0
 
-    @staticmethod
-    def _parse_text(path: str, tokens: list[set[str]], **context) -> str:
-        content = ""
+    for i in non_ansi[::-1]:
+        if i != "\x00":
+            break
+        right += 1
 
-        keyword_depth = 0
-        exec_str = ""
+    return string + " " * right
 
-        for token in tokens:
-            idf, value, line = token
+def _side_to_side(rendered: list[list[str]], gap: int = 0, padding: int = 0, padding_left: int = 0, padding_right: int = 0, padding_top: int = 0, padding_bottom: int = 0) -> str:
+    padding_left = max(padding_left + padding, 0)
+    padding_right = max(padding_right + padding, 0)
+    padding_top = max(padding_top + padding, 0)
+    padding_bottom = max(padding_bottom + padding, 0)
 
-            if keyword_depth == 0 and exec_str:
-                exec("_DTF_RESULT_STRING=\"\"\n" + exec_str, context)
-                content += context["_DTF_RESULT_STRING"]
+    max_height = len(max(rendered, key=len))
 
-                exec_str = ""
+    for i in range(len(rendered)): # Set all to same height
+        rendered[i] += ["" for _ in range(max_height - rendered[i].count('\n'))]
 
-            if keyword_depth > 0:
-                if idf == DynamicTextFormat.TEXT:
-                    exec_str += value.replace("\n", "\\n")
+    widths = [_visual_len(max(each, key=_visual_len)) for each in rendered]
 
-                elif idf == DynamicTextFormat.IDENTIFIER:
-                    exec_str += "\"\"\" + str(" + value.replace("\n", "\\n") + ") + \"\"\""
+    final = []
+    line = ""
 
-                elif idf == DynamicTextFormat.KEYWORD:
-                    if value == "end":
-                        if keyword_depth == 0:
-                            raise DynamicTextFormatError(f"{path}:~{line} Nothing to end")
+    for i in range(max_height):
+        for j, each in enumerate(rendered):
+            if i < len(each):
+                line += _visual_ljust(each[i], widths[j]) + " " * gap
 
-                        keyword_depth -= 1
+        final.append(" " * padding_left + line.rstrip() + " " * padding_right)
+        line = ""
 
-                        if keyword_depth == 0:
-                            exec_str += "\"\"\"\n"
+    return "\n" * padding_top + "\n".join(final) + "\n" * padding_bottom
 
-                    else:
+def _clean_text(text: str) -> str:
+    for i in ["{%", "%}"]:
+        text = text.replace("\n" + i + "\n", "")
+        text = text.replace(i + "\n", "")
+        text = text.replace("\n" + i, "")
+        text = text.replace(i, "")
+
+    for i in ["{{", "}}"]:
+        text = text.replace(i, "")
+
+    for i in [("{\\{", "{{"), ("}\\}", "}}"), ("{\\%", "{%"), ("%\\}", "%}")]:
+        text = text.replace(i[0], i[1])
+
+    return text
+
+def _tokenize_text(path: str, content: str) -> ...:
+    tokens = []
+
+    context = []
+    text = []
+
+    line = 1
+
+    for idx, ch in enumerate(content):
+        if idx < len(content) - 1:
+            if ch == "{" and content[idx + 1] == "{":
+                context.append([_IDENTIFIER, "", line])
+
+            if ch == "{" and content[idx + 1] == "%":
+                context.append([_KEYWORD, "", line])
+
+            if ch == "}" and content[idx + 1] == "}":
+                if context[-1][0] != _IDENTIFIER:
+                    raise DynamicTextFormatError(f"{path}:{line} Expected '%}}' not '}}}}'")
+
+                tokens.append(context.pop())
+
+            if ch == "%" and content[idx + 1] == "}":
+                if context[-1][0] != _KEYWORD:
+                    raise DynamicTextFormatError(f"{path}:{line} Expected '}}}}' not '%}}'")
+
+                tokens.append(context.pop())
+
+        if context:
+            if text:
+                tokens.append([_TEXT, "".join(text), line])
+                text = []
+
+            context[-1][1] += ch
+
+        else:
+            text.append(ch)
+
+        if ch == "\n": line += 1
+
+    if text:
+        tokens.append([_TEXT, "".join(text), line])
+
+    return [
+        [
+            idf,
+            _clean_text(val) if idf == _TEXT else _clean_text(val).strip(),
+            ln,
+        ]
+        for idf, val, ln in tokens
+    ]
+
+def _parse_text(path: str, tokens: list[set[str]], **context) -> str:
+    content = ""
+
+    keyword_depth = 0
+    exec_str = ""
+
+    for token in tokens:
+        idf, value, line = token
+
+        if keyword_depth == 0 and exec_str:
+            exec("_DTF_RESULT_STRING=\"\"\n" + exec_str, context)
+            content += context["_DTF_RESULT_STRING"]
+
+            exec_str = ""
+
+        if keyword_depth > 0:
+            if idf == _TEXT:
+                exec_str += value.replace("\n", "\\n")
+
+            elif idf == _IDENTIFIER:
+                exec_str += "\"\"\" + str(" + value.replace("\n", "\\n") + ") + \"\"\""
+
+            elif idf == _KEYWORD:
+                if value == "end":
+                    if keyword_depth == 0:
+                        raise DynamicTextFormatError(f"{path}:~{line} Nothing to end")
+
+                    keyword_depth -= 1
+
+                    if keyword_depth == 0:
                         exec_str += "\"\"\"\n"
-                        exec_str += "\t" * keyword_depth + value.replace("\n", "\\n") + ":\n" + "\t" * (keyword_depth + 1) + "_DTF_RESULT_STRING += \"\"\""
-                        keyword_depth += 1
-
-            elif idf == DynamicTextFormat.TEXT:
-                content += value
-
-            elif idf == DynamicTextFormat.IDENTIFIER:
-                try:
-                    if ("[" in value and "]" in value) or ("(" in value and ")" in value):
-                        content += eval(value, context)
-
-                    else:
-                        content += context[value]
-
-                except KeyError:
-                    raise DynamicTextFormatError(f"{path}:~{line} '{value}' is not defined")
-
-            elif idf == DynamicTextFormat.KEYWORD:
-                if value.startswith("set "):
-                    try:
-                        exec(value.split("set ")[1], context)
-                    except IndexError:
-                        raise DynamicTextFormatError(f"{path}:~{line} '{value}' is incomplete")
-
-                elif value.startswith("include "):
-                    try:
-                        rendered = []
-                        render_paths = []
-                        current = ""
-                        in_quotes = False
-
-                        for i in value.split("include ")[1]:
-                            if i == '"':
-                                if current:
-                                    render_paths.append(current)
-                                    current = ""
-                                in_quotes = not in_quotes
-
-                            elif in_quotes:
-                                current += i
-
-                        for render_path in render_paths:
-                            rendered.append(DynamicTextFormat.render_text(render_path, **context).split("\n"))
-
-                        kwargs = {}
-                        if "with " in value:
-                            for i in value.split("with ")[1].replace(" = ", "=").replace(" =", "=").replace("= ", "=").split(" "):
-                                arg = i.split("=")
-                                kwargs.update({arg[0]: eval(arg[1], context)})
-
-                        content += side_to_side(rendered, **kwargs)
-
-                    except IndexError:
-                        raise DynamicTextFormatError(f"{path}:~{line} '{value}' is incomplete. Maybe you missed a '\"' in the path?")
-                    except Exception as e:
-                        raise DynamicTextFormatError(f"{path}:~{line} '{value}' failed with exception: {e}")
-
-                elif value == "end":
-                    raise DynamicTextFormatError(f"{path}:~{line} Nothing to end")
 
                 else:
-                    exec_str = value.replace("\n", "\\n") + ":\n" + "\t_DTF_RESULT_STRING += \"\"\""
-                    keyword_depth = 1
+                    exec_str += "\"\"\"\n"
+                    exec_str += "\t" * keyword_depth + value.replace("\n", "\\n") + ":\n" + "\t" * (keyword_depth + 1) + "_DTF_RESULT_STRING += \"\"\""
+                    keyword_depth += 1
 
-        return content
+        elif idf == _TEXT:
+            content += value
 
-    @staticmethod
-    def _tokenize_text(path: str, content: str) -> ...:
-        tokens = []
+        elif idf == _IDENTIFIER:
+            try:
+                if ("[" in value and "]" in value) or ("(" in value and ")" in value):
+                    content += eval(value, context)
 
-        context = []
-        text = []
+                else:
+                    content += context[value]
 
-        line = 1
+            except KeyError:
+                raise DynamicTextFormatError(f"{path}:~{line} '{value}' is not defined")
 
-        for idx, ch in enumerate(content):
-            if idx < len(content) - 1:
-                if ch == "{" and content[idx + 1] == "{":
-                    context.append([DynamicTextFormat.IDENTIFIER, "", line])
+        elif idf == _KEYWORD:
+            if value.startswith("set "):
+                try:
+                    exec(value.split("set ")[1], context)
+                except IndexError:
+                    raise DynamicTextFormatError(f"{path}:~{line} '{value}' is incomplete")
 
-                if ch == "{" and content[idx + 1] == "%":
-                    context.append([DynamicTextFormat.KEYWORD, "", line])
+            elif value.startswith("include "):
+                try:
+                    rendered = []
+                    render_paths = []
+                    current = ""
+                    in_quotes = False
 
-                if ch == "}" and content[idx + 1] == "}":
-                    if context[-1][0] != DynamicTextFormat.IDENTIFIER:
-                        raise DynamicTextFormatError(f"{path}:{line} Expected '%}}' not '}}}}'")
+                    for i in value.split("include ")[1]:
+                        if i == '"':
+                            if current:
+                                render_paths.append(current)
+                                current = ""
+                            in_quotes = not in_quotes
 
-                    tokens.append(context.pop())
+                        elif in_quotes:
+                            current += i
 
-                if ch == "%" and content[idx + 1] == "}":
-                    if context[-1][0] != DynamicTextFormat.KEYWORD:
-                        raise DynamicTextFormatError(f"{path}:{line} Expected '}}}}' not '%}}'")
+                    for render_path in render_paths:
+                        rendered.append(render_text(render_path, **context).split("\n"))
 
-                    tokens.append(context.pop())
+                    kwargs = {}
+                    if "with " in value:
+                        for i in value.split("with ")[1].replace(", ", " ").replace(",", " ").replace(" = ", "=").replace(" =", "=").replace("= ", "=").split(" "):
+                            arg = i.split("=")
+                            kwargs.update({arg[0]: eval(arg[1], context)})
 
-            if context:
-                if text:
-                    tokens.append([DynamicTextFormat.TEXT, "".join(text), line])
-                    text = []
+                    content += _side_to_side(rendered, **kwargs)
 
-                context[-1][1] += ch
+                except IndexError:
+                    raise DynamicTextFormatError(f"{path}:~{line} '{value}' is incomplete. Maybe you missed a '\"' in the path?")
+                except Exception as e:
+                    raise DynamicTextFormatError(f"{path}:~{line} '{value}' failed with exception: {e}")
+
+            elif value == "end":
+                raise DynamicTextFormatError(f"{path}:~{line} Nothing to end")
 
             else:
-                text.append(ch)
+                exec_str = value.replace("\n", "\\n") + ":\n" + "\t_DTF_RESULT_STRING += \"\"\""
+                keyword_depth = 1
 
-            if ch == "\n": line += 1
+    return content
 
-        if text:
-            tokens.append([DynamicTextFormat.TEXT, "".join(text), line])
+def render_text(path_or_text: str, **context):
+    path = os.path.join(Options.template_folder, path_or_text)
+    if os.path.exists(path):
+        if not path.endswith(".dtf"):
+            raise RuntimeError("Path for render_text must be a .dtf file")
 
-        return [
-            [
-                idf,
-                DynamicTextFormat._clean_text(val) if idf == DynamicTextFormat.TEXT else DynamicTextFormat._clean_text(val).strip(),
-                ln,
-            ]
-            for idf, val, ln in tokens
-        ]
+        contents = None
+        with open(path) as f:
+            contents = f.read()
 
-    @staticmethod
-    def _clean_text(text: str) -> str:
-        for i in ["{%", "%}"]:
-            text = text.replace("\n" + i + "\n", "")
-            text = text.replace(i + "\n", "")
-            text = text.replace("\n" + i, "")
-            text = text.replace(i, "")
+    else:
+        path = "Text"
+        contents = path_or_text
 
-        for i in ["{{", "}}"]:
-            text = text.replace(i, "")
+    if not contents:
+        return ""
 
-        for i in [("{\\{", "{{"), ("}\\}", "}}"), ("{\\%", "{%"), ("%\\}", "%}")]:
-            text = text.replace(i[0], i[1])
+    tokens = _tokenize_text(path, contents)
+    result = _parse_text(path, tokens, **context)
 
-        return text
+    return result
+
