@@ -1,9 +1,8 @@
 '''
 An implementation of the Dynamic Text Format.
 
-This implementation and format are made by Lenart Kladnik
+This implementation, format and idea are made by Lenart Kladnik
 (https://github.com/lenartkladnik)
-2026
 '''
 
 import os.path

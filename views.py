@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, current_app
 from datetime import datetime
 from dtf import render_text
-from resources import background_color, bold, color, end_color, box, italic, side_to_side, visual_center
+from resources import background_color, bold, color, end_color, box, italic, new_dynamic_route, side_to_side, visual_center, force_t, force_response
 
 SKILLS = 'media/skills/'
 SOCIALS = 'media/socials/'
@@ -150,7 +150,7 @@ skills = [
     (
         'Git',
         SKILLS + 'git.svg',
-        f''
+        f'{color("orange")} 🭊▆🬿    {end_color()}\n{color("orange")}🭮{background_color("orange")}   {background_color("transparent")}🭬{end_color()}{color("dark-orange")}git{end_color()}\n{color("orange")} 🭥🮅🭚    {end_color()}'
     )
 ]
 
@@ -162,9 +162,8 @@ pages = [
 
 text_response = ["curl", "python", "binget", "java", "perl", "php", "pycurl", "go-http"]
 
-@views.route('/')
-def index():
-    if any([x in request.headers["User-Agent"].lower() for x in text_response]):
+def render_index(force: force_t | None = None):
+    if (force == force_response.txt or any([x in request.headers["User-Agent"].lower() for x in text_response])) and force != force_response.html:
         return render_text('{% include "index.dtf" with padding_left = 2, padding_bottom = 1 %}', color=color,
                                         end_color=end_color, skills=skills,
                                         background_color=background_color,
@@ -178,16 +177,24 @@ def index():
 
     return render_template('index.html', socials=socials, projects=new_projects, skills=skills)
 
-@views.route('/projects')
-def projects():
-    if any([x in request.headers["User-Agent"].lower() for x in text_response]):
+@views.route('/')
+def root():
+    return render_index()
+
+new_dynamic_route(views, render_index, 'index', '/index')
+
+def render_projects(force: force_t | None = None):
+    if (force == force_response.txt or any([x in request.headers["User-Agent"].lower() for x in text_response])) and force != force_response.html:
         return render_text('projects.dtf', all_projects=all_projects, box=box, color=color, end_color=end_color)
 
     return render_template('projects.html', projects=all_projects)
 
-@views.route('/contact')
-def contact():
-    if any([x in request.headers["User-Agent"].lower() for x in text_response]):
+new_dynamic_route(views, render_projects, 'projects', '/projects')
+
+def render_contact(force: force_t | None = None):
+    if (force == force_response.txt or any([x in request.headers["User-Agent"].lower() for x in text_response])) and force != force_response.html:
         return render_text('{% include "contact.dtf" "logo_snippet.dtf" with padding = 1, gap = 10, padding_left = 1 %}', socials=display_socials, mail=mail, color=color, background_color=background_color, end_color=end_color)
 
     return render_template('contact.html', socials=display_socials, mail=mail)
+
+new_dynamic_route(views, render_contact, 'contact', '/contact')
