@@ -42,7 +42,7 @@ def _color_id(color: str) -> int:
         case "light-blue": return 68
         case "yellow": return 220
         case "orange": return 202
-        case "dark-orange": return 202
+        case "dark-orange": return 166
 
     return -1 # Invalid color
 
