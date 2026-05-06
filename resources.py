@@ -1,13 +1,13 @@
 from typing import Callable, cast
 from dtf import _side_to_side, _remove_ansi, _visual_len, _visual_ljust
-from flask import Flask
+from flask import Blueprint, Flask
 
 type force_t = int
 class force_response:
     html: force_t = 0
     txt: force_t = 1
 
-def new_dynamic_route(app: Flask, render: Callable, name: str, base_path: str):
+def new_dynamic_route(app: Flask | Blueprint, render: Callable, name: str, base_path: str):
     name = "_" + name # Try to avoid conflicts with the user defined routes
 
     app.add_url_rule(base_path, name, render)

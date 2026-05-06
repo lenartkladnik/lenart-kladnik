@@ -1,4 +1,13 @@
-{{ color("text") }}Lenart Kladnik{{ end_color() }}
+{{ bold() }}Lenart Kladnik{{ end_color() }}
+
+{{ color("lime") }}$ echo {{ end_color() }}{{ color("text") }}\{{ end_color() }}
+{{ color("text") }}I love programming, \{{ end_color() }}
+{{ color("text") }}I am currently in high school, \{{ end_color() }}
+{{ color("text") }}I love climbing{{ color("orange") }} > {{ color("text") }}about.txt{{ end_color() }}
+
+{{ color("lime") }}$ whoami {{ end_color() }}
+{{ color("text") }}@lenartkladnik{{ end_color() }}
+
 {{ color("light-gray") }}source: {{ color("aqua") }}https://github.com/lenartkladnik/lenart-kladnik{{ end_color() }}
 
 {{ box([[color('magenta') + i[2] + end_color() for i in socials], [color('magenta') + italic() + i[0] + end_color() for i in socials]], "Socials", 1, 1, 1, 1, "left") }}

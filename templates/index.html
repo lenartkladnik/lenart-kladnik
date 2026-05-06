@@ -5,14 +5,20 @@
 
 {% block content %}
 <div class="main-container">
-    <img class="pfp" src="{{ url_for('static', filename='media/logo.svg') }}">
+    <img id="pfp" class="pfp" src="{{ url_for('static', filename='media/logo.jpg') }}">
     <div class="main-content">
-        <span class="tag">pyth0g</span>
         <span class="name">Lenart Kladnik</span>
 
-        <div class="description">
-            <span>I Love Programming / I am Currently in Highschool / I Love Climbing</span>
-        </div>
+        <pre class="description">
+<span class="command-lime">$ echo</span> \
+I love programming, \
+I am currently in high school, \
+I love climbing <span class="command-orange">&gt;</span> about.txt
+<br/>
+<span class="command-lime">$ whoami</span>
+@lenartkladnik
+        </pre>
+
         <div class="socials">
             {% for social in socials %}
             <a class="social-link" target="_blank" href="{{ social[0] }}">
@@ -27,16 +33,6 @@
 
 <div class="content">
     <div class="label">
-        <span class="text">Recent Projects</span>
-        <a class="more" href="projects">View all</a>
-    </div>
-    <div class="projects" id="projects">
-        {% for project in projects %}
-        {% include 'project_snippet.html' %}
-        {% endfor %}
-    </div>
-
-    <div class="label">
         <span class="text">My skillset</span>
     </div>
     <div class="skillset" id="skillset">
@@ -45,6 +41,16 @@
             <img class="logo" src="{{ url_for('static', filename=skill[1]) }}">
             <span class="idf">{{ skill[0] }}</span>
         </div>
+        {% endfor %}
+    </div>
+
+    <div class="label">
+        <span class="text">Recent Projects</span>
+        <a class="more" href="projects">View all</a>
+    </div>
+    <div class="projects" id="projects">
+        {% for project in projects %}
+        {% include 'project_snippet.html' %}
         {% endfor %}
     </div>
 

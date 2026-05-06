@@ -118,33 +118,29 @@ footer {
     top: 0;
 }
 
-.name {
-    position: relative;
+.command-lime {
+  color: rgb(175, 255, 0);
+}
 
-    font-size: 2.2vw;
-    max-width: calc(var(--normal-width) - 0.2vw);
-
-    bottom: 10vh;
+.command-orange {
+  color: rgb(207, 96, 48);
 }
 
 .tag {
-    position: relative;
+    font-size: 1.2vw;
+    max-width: calc(var(--normal-width) - 0.2vw);
+}
 
+.name {
     font-size: 5.5vw;
 
     max-width: fit-content;
-    bottom: 15vh;
 
     font-family: "Righteous", sans-serif;
 }
 
 .description {
-    position: relative;
-
     font-size: 1vw;
-
-    bottom: 8.5vh;
-    max-width: 24vw;
 }
 
 .social-img:hover {
@@ -163,7 +159,7 @@ footer {
     display: inline;
     position: absolute;
 
-    width: fit-content;
+    width: max-content;
 
     left: 50%;
     top: 45%;
@@ -176,24 +172,10 @@ footer {
 
     border-radius: 100px;
 
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
 
-    bottom: 2.5vh;
-
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-.contact-pfp {
-    position: absolute;
-
-    border-radius: 100px;
-
-    width: 200px;
-    height: 200px;
-
-    right: 20vw;
-    top: 40vh;
+    top: 4.5vh;
 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -206,6 +188,8 @@ footer {
 
     left: 50%;
     transform: translateX(-50%);
+
+    font-size: 1vw;
 }
 
 .contact-container .socials {
@@ -217,13 +201,12 @@ footer {
 
 .ind {
     color: gray;
+
+    margin-top: 20px;
 }
 
 .socials {
-    position: relative;
     font-size: 0;
-
-    bottom: 4.5vh;
 }
 
 .social-link {
@@ -481,23 +464,22 @@ footer {
         padding: 2vw;
     }
 
-    .tag {
-        font-size: 8.5vw;
+    .main-content {
+        position: relative;
+        right: 25%;
 
-        bottom: 0;
-        left: 50%;
-
-        transform: translateX(-50%);
+        padding-left: 0;
+        top: 22vh;
     }
 
     .name {
+        font-size: 8.5vw;
+    }
+
+    .tag {
         font-size: 1.6vh;
 
-        top: 0.5vh;
-        bottom: 0;
         left: 50%;
-
-        text-align: center;
 
         transform: translateX(-50%);
     }
@@ -505,17 +487,10 @@ footer {
     .description {
         font-size: 1.4vh;
         max-width: 100%;
-
-        top: 2vh;
-        bottom: 0;
-
-        text-align: center;
     }
 
     .socials {
         position: relative;
-
-        top: 2vh;
 
         width: max-content;
     }
@@ -523,6 +498,7 @@ footer {
     .pfp {
         left: 50%;
         transform: translateX(-50%);
+        top: -15vh;
     }
 
     .contact-pfp {
@@ -535,6 +511,7 @@ footer {
     .contact-container {
         top: 32vh;
         width: var(--normal-width);
+        font-size: 4vw;
     }
 
     .skillset {

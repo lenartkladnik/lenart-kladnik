@@ -193,7 +193,7 @@ new_dynamic_route(views, render_projects, 'projects', '/projects')
 
 def render_contact(force: force_t | None = None):
     if (force == force_response.txt or any([x in request.headers["User-Agent"].lower() for x in text_response])) and force != force_response.html:
-        return render_text('{% include "contact.dtf" "logo_snippet.dtf" with padding = 1, gap = 10, padding_left = 1 %}', socials=display_socials, mail=mail, color=color, background_color=background_color, end_color=end_color)
+        return render_text('{% include "contact.dtf" with padding = 1 %}', socials=display_socials, mail=mail, color=color, background_color=background_color, end_color=end_color)
 
     return render_template('contact.html', socials=display_socials, mail=mail)
 

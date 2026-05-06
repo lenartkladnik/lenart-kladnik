@@ -1,0 +1,11 @@
+{{ background_color("mid-black") }}       {{ color("purple") }}🭇            {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}▁▁ 🭊🭁 🬼          {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}██ ██ 🭌🬿 ▁▁ 🭊🭁   {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}██ ██ ██ ██ {{ color("mid-purple") }}██   {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}██ ██ ██ ██ {{ color("mid-purple") }}██   {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}██ ██ ██ {{ color("mid-purple") }}██ █{{ color("light-purple") }}█   {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}██ ██ █{{ color("mid-purple") }}█ █{{ color("light-purple") }}█ ██   {{ end_color() }}
+{{ background_color("mid-black") }}   {{ color("purple") }}🬂🬂 🬂{{ color("mid-purple") }}🬂 🬂🬂 {{ color("light-purple") }}🬂🬂 🬂🬂   {{ end_color() }}
+{{ background_color("mid-black") }}       {{ color("white") }}Pyth0g       {{ end_color() }}
+{{ background_color("mid-black") }}                    {{ end_color() }}
+

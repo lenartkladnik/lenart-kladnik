@@ -15,7 +15,7 @@ const normal_radius = 2;
 const mnColor = "#c0c0c0";
 const secColor = "#0c0c0c";
 
-const maxWidth = window.innerWidth;
+let maxWidth = window.innerWidth;
 let maxHeight = 0;
 let maxHeightReady = false;
 
@@ -165,13 +165,13 @@ var climber = {
     bottom_offset: { x: 0, y: 25 / 2 }
 };
 
-function drawClimber(ctx, holds, lengths, canvas) {
+function drawClimber(ctx, holds, lengths, canvas, snapX, snapY) {
     const normal_stroke = mnColor;
     const normal_line_width = "1.2";
     const maxReach = 100;
 
-    const canvas_center_x = X + canvas.width / 2;
-    const canvas_center_y = Y + canvas.height / 2;
+    const canvas_center_x = snapX + canvas.width / 2;
+    const canvas_center_y = snapY + canvas.height / 2;
 
     const top_point = {
         x: canvas_center_x + climber.top_offset.x,
@@ -182,18 +182,25 @@ function drawClimber(ctx, holds, lengths, canvas) {
         y: canvas_center_y + climber.bottom_offset.y
     };
 
-    const localize = (p) => ({ x: p.x - X, y: p.y - Y });
+    const localize = (p) => ({ x: p.x - snapX, y: p.y - snapY });
+
+    const visible_holds = holds.filter(h =>
+        h.x >= snapX && h.x <= snapX + canvas.width &&
+        h.y >= snapY && h.y <= snapY + canvas.height
+    );
 
     function findClosestHold(holds, center, xSign, ySign) {
-        return holds
-            .filter(h =>
-                (xSign === 0 || (xSign > 0 ? h.x >= center.x : h.x <= center.x)) &&
-                (ySign === 0 || (ySign > 0 ? h.y >= center.y : h.y <= center.y)) &&
-                distance(h, center) <= maxReach
-            )
-            .reduce((minEl, currentEl) => {
-                return distance(currentEl, center) < distance(minEl, center) ? currentEl : minEl;
-            }, holds[0]);
+        const candidates = holds.filter(h =>
+            (xSign === 0 || (xSign > 0 ? h.x >= center.x : h.x <= center.x)) &&
+            (ySign === 0 || (ySign > 0 ? h.y >= center.y : h.y <= center.y)) &&
+            distance(h, center) <= maxReach
+        )
+
+        if (candidates.length == 0) return null;
+
+        return candidates.reduce((minEl, currentEl) =>
+            distance(currentEl, center) < distance(minEl, center) ? currentEl : minEl
+        );
     }
 
     const limbs = [
@@ -205,7 +212,7 @@ function drawClimber(ctx, holds, lengths, canvas) {
 
     for (let i = 0; i < limbs.length; i++) {
         const { center, xSign, ySign } = limbs[i];
-        var closest = findClosestHold(holds, center, xSign, ySign);
+        var closest = findClosestHold(visible_holds, center, xSign, ySign);
 
         if (!closest) continue;
 
@@ -307,7 +314,7 @@ async function loadHolds() {
 
         await fetch(svgUrl)
             .then(response => response.text())
-            .then(svgText => {
+            .then(svgText => new Promise((resolve, reject) => {
                 const blob = new Blob([svgText], { type: 'image/svg+xml' });
                 const url = URL.createObjectURL(blob);
 
@@ -315,20 +322,23 @@ async function loadHolds() {
                 img.onload = () => {
                     holds[i] = img;
                     URL.revokeObjectURL(url);
+                    resolve();
+                };
+                img.onerror = (e) => {
+                    console.error(`[Climber Background] Failed to load hold SVG ${i}: ${e}`);
+                    holds[i] = null;
+                    resolve();
                 };
                 img.src = url;
-
-            console.log(`[Climber Background] Loaded hold SVG ${i}.`);
-        })
-        .catch(e => {
-            console.error(`[Climber Background] Failed to load hold SVG ${i}: ${e}`);
-            holds[i] = null;
-        });
+            }))
+            .catch(e => {
+                console.error(`[Climber Background] Failed to fetch hold SVG ${i}: ${e}`);
+                holds[i] = null;
+            });
     }
 
     return holds;
 }
-
 function drawHold(holds_svgs, ctx, x, y, canvas, holds_index, highlight) {
     if (holds_svgs.length !== holdSpriteCount) {
         console.warn(`[Climber Background] Attempted draw when holds aren't loaded yet!`);
@@ -342,12 +352,14 @@ function drawHold(holds_svgs, ctx, x, y, canvas, holds_index, highlight) {
     const hold = getRandomInt(0, holdSpriteCount, mulberry32(holds_index));
 
     const img = holds_svgs[hold];
+
+    if (!img || !img.complete || img.naturalWidth === 0) return 1;
+
     try {
         if (highlight) { ctx.filter = 'brightness(100%) contrast(0%)'; }
         else { ctx.filter = 'brightness(50%) contrast(20%)'; }
 
         ctx.drawImage(img, x, y, w, h);
-        ctx.filter = 'none';
 
         return 0;
 
@@ -355,6 +367,8 @@ function drawHold(holds_svgs, ctx, x, y, canvas, holds_index, highlight) {
         console.error(`[Climber Background] Failed to draw hold ${hold} (${img}) with holds=(${holds_svgs}): ${e}.`);
 
         return 1;
+    } finally {
+        ctx.filter = 'none';
     }
 }
 
@@ -424,14 +438,15 @@ function maxHeightCheck() {
 }
 
 function drawBgClimber(holds_svgs) {
+    const snapX = X;
+    const snapY = Y;
+
     var canvas = document.getElementById('climber');
-
     var ctx = canvas.getContext("2d");
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    var [displayed_holds, _] = drawHoldsBound(holds_svgs, ctx, holds, X, Y, X + canvas.width, Y + canvas.height, canvas, true);
-    drawClimber(ctx, holds, lengths, canvas);
+    var [displayed_holds, _] = drawHoldsBound(holds_svgs, ctx, holds, snapX, snapY, snapX + canvas.width, snapY + canvas.height, canvas, true);
+    drawClimber(ctx, holds, lengths, canvas, snapX, snapY);
 
     applyFading(ctx, canvas);
 }
@@ -470,4 +485,14 @@ async function init(holds_svgs) {
 
 loadHolds().then(function(holds_svgs) {
     init(holds_svgs);
+});
+
+window.addEventListener('resize', async () => {
+    maxWidth = window.innerWidth;
+    maxHeight = 0;
+    maxHeightReady = false;
+
+    await getMaxHeight();
+
+    holds = getHolds(maxWidth, maxHeight);
 });
