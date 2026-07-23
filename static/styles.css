@@ -4,6 +4,7 @@
 
 :root {
     --normal-width: 30vw;
+    scroll-behavior: smooth;
 }
 
 * {
