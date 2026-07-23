@@ -89,6 +89,15 @@ all_projects = [
         'static/media/projects/musicplayer.png',
         'MusicPlayer',
         'Play and download music in the terminal'
+    ),
+    (
+        'Jul 23, 2026',
+        'A platformer game about going up made in godot.',
+        'Personal project',
+        '/projects/rising-heights',
+        'static/media/projects/rising-heights.png',
+        'Rising Heights',
+        'Platformer game about going up'
     )
 ]
 
