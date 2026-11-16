@@ -97,7 +97,7 @@ all_projects = [
         '/projects/rising-heights',
         'static/media/projects/rising-heights.png',
         'Rising Heights',
-        'Platformer game about going up'
+        'Platformer game made for the FRI26 gamejam'
     )
 ]
 
@@ -160,6 +160,26 @@ skills = [
         'Git',
         SKILLS + 'git.svg',
         f'{color("orange")} 🭊▆🬿    {end_color()}\n{color("orange")}🭮{background_color("orange")}   {background_color("transparent")}🭬{end_color()}{color("dark-orange")}git{end_color()}\n{color("orange")} 🭥🮅🭚    {end_color()}'
+    ),
+    (
+        'Godot',
+        SKILLS + 'godot.svg',
+        f'{color("mid-blue")}▟█▀▀▀█▙{end_color()}\n{color("mid-blue")}█{color("white")}{background_color("mid-blue")}● ▄ ●{end_color()}{color("mid-blue")}█{end_color()}\n{color("mid-blue")}▜█▄▄▄█▛{end_color()}\n{color("mid-blue")} ▀▀▀▀▀ {end_color()}'
+    ),
+    (
+        'Rust',
+        SKILLS + 'rust.svg',
+        f'{color("orange")}  ▟█▙  {end_color()}\n{color("orange")}▐{color("white")}{background_color("orange")} R {end_color()}{color("orange")}▌{end_color()}\n{color("orange")}  ▜█▛  {end_color()}'
+    ),
+    (
+        'Dart',
+        SKILLS + 'dart.svg',
+        f'{color("light-blue")}  ◢██◣ {end_color()}\n{color("light-blue")} ◢█◤{color("mid-blue")}◥█◣{end_color()}\n{color("mid-blue")}◢█◤  ◥█{end_color()}\n{color("dark-blue")}◥█████◤{end_color()}'
+    ),
+    (
+        'Flutter',
+        SKILLS + 'flutter.svg',
+        f'{color("light-blue")}   ◢██◤{end_color()}\n{color("light-blue")} ◢██◤  {end_color()}\n{color("dark-blue")} ◥██◣◢◣{end_color()}\n{color("dark-blue")}   ◥███{end_color()}'
     )
 ]
 
@@ -169,7 +189,7 @@ pages = [
     ('/contact', 'Get the contact page')
 ]
 
-text_response = ["curl", "python", "binget", "java", "perl", "php", "pycurl", "go-http"]
+text_response = ["curl", "python", "binget", "java", "perl", "php", "dart", "go-http"]
 
 def render_index(force: force_t | None = None):
     if (force == force_response.txt or any([x in request.headers["User-Agent"].lower() for x in text_response])) and force != force_response.html:
